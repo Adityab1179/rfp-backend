@@ -1,3 +1,4 @@
+const mongoose=require(mongoose)
 const updateVendorStatus = async (req, res) => {
     try {
       const { status } = req.body;
@@ -48,4 +49,4 @@ const updateVendorStatus = async (req, res) => {
     }
   };
   
-  module.exports = { updateVendorStatus };
+  module.exports =  updateVendorStatus ;
