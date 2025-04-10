@@ -1,4 +1,5 @@
-const mongoose=require(mongoose)
+const mongoose = require("mongoose");
+const Vendor=require("../models/Vendor")
 const updateVendorStatus = async (req, res) => {
     try {
       const { status } = req.body;
@@ -12,7 +13,6 @@ const updateVendorStatus = async (req, res) => {
       vendor.status = status;
       await vendor.save();
   
-      // Send email only if activated
       if (status === "Active") {
         sendActivationEmail(vendor.email, vendor.firstName);
       }
@@ -24,7 +24,7 @@ const updateVendorStatus = async (req, res) => {
     }
   };
   
-  // Function to Send Activation Email
+
   const sendActivationEmail = async (email, name) => {
     try {
       let transporter = nodemailer.createTransport({
@@ -39,7 +39,7 @@ const updateVendorStatus = async (req, res) => {
         from: process.env.MAIL_USER,
         to: email,
         subject: "Account Activated",
-        text: `Hello ${name},\n\nYour account has been activated. You can now log in.\n\nRegards,\nAdmin`
+        text: `Hello ${name},\n\nYour account has been activated. You can now log in.`
       };
   
       await transporter.sendMail(mailOptions);
