@@ -30,10 +30,14 @@ const RFPCreation = async (req, res) => {
       errors.minimumPrice = "Minimum Price must be a number.";
     if (maximumPrice && isNaN(maximumPrice))
       errors.maximumPrice = "Maximum Price must be a number.";
+    const minPriceNum = parseFloat(minimumPrice);
+    const maxPriceNum = parseFloat(maximumPrice);
+    
+    if (!isNaN(minPriceNum) && !isNaN(maxPriceNum) && maxPriceNum < minPriceNum)
+      errors.maximumPrice = "Maximum Price must be greater than Minimum Price.";
 
     if (Object.keys(errors).length > 0) {
-      console.log(errors)
-      return res.status(400).json({ errors });
+      return res.status(400).json({response:"Failed", errors });
     }
     const vendorObjectIds = selectedVendors.map(id => new mongoose.Types.ObjectId(id));
     const newRFP = new RFP({
