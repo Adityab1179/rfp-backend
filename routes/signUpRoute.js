@@ -17,7 +17,7 @@ routes.post("/registeradmin",signUpAdmin)
 routes.post("/login",login)
 routes.get("/listvendors", getVendors)
 routes.get("/getVendorsById",Auth,getVendorsById);
-routes.get("/categories",Auth,categories);
+routes.get("/categories",categories);
 routes.put("/updatevendorstatus/:id",Auth,updateVendorStatus)
 routes.get("/getCategoryById/:id",Auth,getCategoryById)
 routes.post("/submitRfp",RFPCreation)
