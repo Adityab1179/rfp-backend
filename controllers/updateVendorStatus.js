@@ -1,21 +1,51 @@
-const Vendors=require("../models/Vendor")
-const url=require("url")
-const updateVendorStatus=async(req,res)=>{
-    try{
-        const{id}=req.params;
-        const {status}=req.body;
-        const vendor=await Vendors.findById(id);
-        const updatedStatus=await Vendors.findByIdAndUpdate(id,{status:status},{new:true});
-        res.status(200).json({
-            response:"success",
-            message:"Vendor status updated successfully",
-            data:{
-                vendor:updatedStatus
-            }
-        })
+const updateVendorStatus = async (req, res) => {
+    try {
+      const { status } = req.body;
+      const vendorId = req.params.vendorId;
+  
+      const vendor = await Vendor.findById(vendorId);
+      if (!vendor) {
+        return res.status(404).json({ response: "error", error: "Vendor not found" });
+      }
+  
+      vendor.status = status;
+      await vendor.save();
+  
+      // Send email only if activated
+      if (status === "Active") {
+        sendActivationEmail(vendor.email, vendor.firstName);
+      }
+  
+      return res.status(200).json({ response: "success", message: "Vendor status updated" });
+    } catch (error) {
+      console.error("Error updating vendor status:", error);
+      res.status(500).json({ response: "error", error: "Server error" });
     }
-    catch(err){
-        console.log(err)
+  };
+  
+  // Function to Send Activation Email
+  const sendActivationEmail = async (email, name) => {
+    try {
+      let transporter = nodemailer.createTransport({
+        service: "gmail",
+        auth: {
+          user: process.env.MAIL_USER,
+          pass: process.env.MAIL_PASS
+        }
+      });
+  
+      let mailOptions = {
+        from: process.env.MAIL_USER,
+        to: email,
+        subject: "Account Activated",
+        text: `Hello ${name},\n\nYour account has been activated. You can now log in.\n\nRegards,\nAdmin`
+      };
+  
+      await transporter.sendMail(mailOptions);
+      console.log("Activation email sent to:", email);
+    } catch (error) {
+      console.error("Error sending email:", error);
     }
-}
-module.exports=updateVendorStatus
+  };
+  
+  module.exports = { updateVendorStatus };
