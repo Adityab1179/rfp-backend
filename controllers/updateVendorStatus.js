@@ -1,5 +1,7 @@
 const mongoose = require("mongoose");
 const Vendor=require("../models/Vendor")
+const nodemailer=require("nodemailer")
+require("dotenv").config()
 const updateVendorStatus = async (req, res) => {
     try {
       const { status } = req.body;
@@ -14,7 +16,10 @@ const updateVendorStatus = async (req, res) => {
       await vendor.save();
   
       if (status === "Active") {
+        console.log("MAIL_USER:", process.env.MAIL_USER);
+        console.log("MAIL_PASS:", process.env.MAIL_PASS);
         sendActivationEmail(vendor.email, vendor.firstName);
+        console.log("sending mail")
       }
   
       return res.status(200).json({ response: "success", message: "Vendor status updated" });
@@ -28,7 +33,7 @@ const updateVendorStatus = async (req, res) => {
   const sendActivationEmail = async (email, name) => {
     try {
       let transporter = nodemailer.createTransport({
-        service: "gmail",
+        host: process.env.MAIL_HOST,
         auth: {
           user: process.env.MAIL_USER,
           pass: process.env.MAIL_PASS
