@@ -3,7 +3,7 @@ const Vendor=require("../models/Vendor")
 const updateVendorStatus = async (req, res) => {
     try {
       const { status } = req.body;
-      const vendorId = req.params.vendorId;
+      const vendorId = req.params.id;
   
       const vendor = await Vendor.findById(vendorId);
       if (!vendor) {
